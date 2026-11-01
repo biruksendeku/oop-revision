@@ -42,14 +42,16 @@ class User {
     console.log(`${this.email} has logged out, bye bye ${this.name}`);
   }
 
-  findByEmail(email) {
+  static findByEmail(email) {
     if (typeof email !== "string") {
       throw new CustomTypeError(
         `Expected string for 'email' field but got ${typeof email}`,
         400,
       );
     }
-    return this.email === email;
+    return User.#users.find(
+    (u) => u.email === email.toLowerCase()
+  ) ?? null;
   }
 
   static getAllUsers() {
@@ -63,3 +65,5 @@ const newUser2 = new User("John", 25, "john@rexus.com");
 // newUser.login();
 // newUser.logout();
 console.log(User.getAllUsers());
+const user = User.findByEmail("david@rexus.com");
+console.log(user);
