@@ -28,7 +28,15 @@ class User {
     this.age = age;
     this.email = email;
   }
+  login() {
+    console.log(`${this.email} has logged in, bye bye ${this.name}`);
+  }
+  logout() {
+    console.log(`${this.email} has logged out, bye bye ${this.name}`);
+  }
 }
 
-const newUser = new User("David", "twenty-one", "david@rexus.com");
-console.log(newUser);
+const newUser = new User("David", 22, "david@rexus.com");
+// console.log(newUser);
+newUser.login();
+newUser.logout();
