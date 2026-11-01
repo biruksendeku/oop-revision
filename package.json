@@ -1,0 +1,13 @@
+{
+  "name": "oop-revision",
+  "version": "1.0.0",
+  "description": "\"To revise my oop basic understanding\"",
+  "license": "MIT",
+  "author": "DevYay",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "start": "node index.js"
+  }
+}

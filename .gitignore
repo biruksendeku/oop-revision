@@ -1,0 +1,6 @@
+node_modules/
+npm-debug.log*
+.npm
+.env
+dump.rdb
+__tests__/
