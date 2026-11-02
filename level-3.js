@@ -1,3 +1,5 @@
+import { BadRequestError, NotFoundError } from "./errors/custom.js";
+
 class BankAccount {
   #balance = 0;
   static #users = [];
@@ -9,6 +11,11 @@ class BankAccount {
   }
 
   deposit(amount) {
+    if (typeof amount !== "number") {
+      throw new BadRequestError(
+        `Invalid amount type: expected number but got ${typeof amount}`,
+      );
+    }
     return (this.#balance += amount);
   }
 
@@ -21,7 +28,17 @@ class BankAccount {
   }
 
   static getUserByEmail(email) {
-    return BankAccount.#users.find((u) => u.email === email.toLowerCase());
+    if (typeof email !== "string") {
+      throw new BadRequestError(
+        `Invalid email type: expected string but got ${typeof email}`,
+      );
+    }
+    const user = BankAccount.#users.find(
+      (u) => u.email === email.toLowerCase(),
+    );
+    if (!user) {
+      throw new NotFoundError("User");
+    }
   }
 }
 
