@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "nodemon index.js",
     "start": "node index.js",
-    "one": "node level-1.js"
+    "one": "node level-1.js",
+    "two": "node level-2.js"
   }
 }

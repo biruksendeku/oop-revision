@@ -49,9 +49,7 @@ class User {
         400,
       );
     }
-    return User.#users.find(
-    (u) => u.email === email.toLowerCase()
-  ) ?? null;
+    return User.#users.find((u) => u.email === email.toLowerCase()) ?? null;
   }
 
   static getAllUsers() {
@@ -59,11 +57,11 @@ class User {
   }
 }
 
-const newUser = new User("David", 22, "david@rexus.com");
-const newUser2 = new User("John", 25, "john@rexus.com");
-// console.log(newUser);
+new User("David", 22, "david@rexus.com");
+new User("John", 25, "john@rexus.com");
+new User("Bura", 23, "bura@rexus.com");
 // newUser.login();
 // newUser.logout();
-console.log(User.getAllUsers());
+console.log("USERS: ", User.getAllUsers());
 const user = User.findByEmail("david@rexus.com");
-console.log(user);
+console.log("user: ", user);
