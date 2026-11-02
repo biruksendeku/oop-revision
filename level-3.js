@@ -8,19 +8,19 @@ class BankAccount {
     BankAccount.#users.push(this);
   }
 
-  #deposit(amount) {
+  deposit(amount) {
     return (this.#balance += amount);
   }
 
   checkBalance() {
-    return `Your account balance is $${this.#balance}`;
+    return `${this.name}: your account balance is $${this.#balance}`;
   }
 
   static getAllUsers() {
     return this.#users;
   }
 
-  getUserByEmail(email) {
+  static getUserByEmail(email) {
     return BankAccount.#users.find((u) => u.email === email.toLowerCase());
   }
 }
@@ -34,4 +34,5 @@ new BankAccount("Tensu", "tensu@rexus.com", "ET");
 console.log(BankAccount.getAllUsers());
 
 const user = BankAccount.getUserByEmail("david@rexus.com");
+user.deposit(100);
 console.log(user.checkBalance());

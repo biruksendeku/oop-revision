@@ -10,6 +10,7 @@
     "dev": "nodemon index.js",
     "start": "node index.js",
     "one": "node level-1.js",
-    "two": "node level-2.js"
+    "two": "node level-2.js",
+    "three": "node level-3.js"
   }
 }
