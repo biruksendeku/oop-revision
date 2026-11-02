@@ -44,18 +44,23 @@ class Account {
   }
 
   static getAllUsers() {
-    return Account.#users.map((user) => user.toJSON()) ?? null;
+    return Account.#users;
   }
 
   static findByEmail(email) {
     const user = Account.#users.find((u) => u.email === email.toLowerCase());
-    return user ? user.toJSON() : null;
+    if (!user) throw new NotFoundError("User");
+    return user;
   }
 
   static findByEmailAndDeposit(email, amount) {
     const user = Account.#users.find((u) => u.email === email.toLowerCase());
     if (!user) throw new NotFoundError("User");
     user.deposit(amount);
+  }
+
+  getAccountBalance() {
+    return this.#balance;
   }
 }
 
@@ -69,8 +74,9 @@ console.log("USERS 1: ", users);
 
 Account.findByEmailAndDeposit("john@rexus.com", 1000);
 
-// const user = Account.findByEmail("david@rexus.com");
-// console.log(user);
+const user = Account.findByEmail("david@rexus.com");
+console.log(user.getAccountBalance());
+console.log(JSON.stringify(user));
 
 const usersLatter = Account.getAllUsers();
 console.log("USERS 2: ", usersLatter);
