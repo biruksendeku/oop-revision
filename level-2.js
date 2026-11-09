@@ -94,6 +94,11 @@ class Account {
     user.deposit(amount);
   }
 
+  static findByEmailAndWithdraw(email, amount) {
+    const user = Account.findByEmail(email);
+    return user.withdraw(amount);
+  }
+
   getAccountBalance() {
     return this.#balance;
   }
@@ -109,9 +114,11 @@ console.log("USERS 1: ", users);
 
 Account.findByEmailAndDeposit("john@rexus.com", 1000);
 
-const accountForWithdrawal = Account.findByEmail("john@rexus.com");
-const remainingBalance = accountForWithdrawal.withdraw(250);
-console.log(`Withdrawal successful. Remaining balance: $${remainingBalance}`);
+Account.findByEmailAndWithdraw("john@rexus.com", 250);
+console.log(
+  "John's balance after withdrawal:",
+  Account.findByEmail("john@rexus.com").getAccountBalance(),
+);
 
 const user = Account.findByEmail("david@rexus.com");
 console.log(user.getAccountBalance());
