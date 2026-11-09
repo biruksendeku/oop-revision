@@ -83,13 +83,14 @@ class Account {
       name: this.name,
       email: this.email,
       age: this.age,
-      date: this.date,
+      date:
+        this.date instanceof Date ? new Date(this.date.getTime()) : this.date,
       balance: this.#balance,
     };
   }
 
   static getAllUsers() {
-    return Account.#users;
+    return Account.#users.map((user) => user.toJSON());
   }
 
   static findByEmail(email) {
@@ -101,6 +102,18 @@ class Account {
     const user = Account.#users.find((u) => u.email === email.toLowerCase());
     if (!user) throw new NotFoundError("User");
     return user;
+  }
+
+  static removeByEmail(email) {
+    const account = Account.findByEmail(email);
+    if (account.#balance !== 0) {
+      throw new BadRequestError(
+        "Cannot remove an account with a non-zero balance",
+      );
+    }
+
+    Account.#users.splice(Account.#users.indexOf(account), 1);
+    return account.toJSON();
   }
 
   static findByEmailAndDeposit(email, amount) {
@@ -159,3 +172,7 @@ console.log(JSON.stringify(user));
 
 const usersLatter = Account.getAllUsers();
 console.log("USERS 2: ", usersLatter);
+
+const removedAccount = Account.removeByEmail("bura@rexus.com");
+console.log("REMOVED ACCOUNT: ", removedAccount);
+console.log("USERS AFTER REMOVAL: ", Account.getAllUsers());
