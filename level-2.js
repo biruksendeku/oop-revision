@@ -5,7 +5,7 @@ import {
   validateDate,
   validateAmount,
 } from "./validation/validator.js";
-import { NotFoundError } from "./errors/custom.js";
+import { BadRequestError, NotFoundError } from "./errors/custom.js";
 
 class Account {
   #balance = 0; // per instance
@@ -28,6 +28,20 @@ class Account {
   deposit(amount) {
     validateAmount(amount);
     this.#balance += amount;
+  }
+
+  withdraw(amount) {
+    validateAmount(amount);
+    if (!Number.isFinite(amount) || amount <= 0) {
+      throw new BadRequestError(
+        "Withdrawal amount must be a positive, finite number",
+      );
+    }
+    if (amount > this.#balance) {
+      throw new BadRequestError("Insufficient funds");
+    }
+    this.#balance -= amount;
+    return this.#balance;
   }
 
   //   createAccountSync() {}
@@ -73,6 +87,10 @@ const users = Account.getAllUsers();
 console.log("USERS 1: ", users);
 
 Account.findByEmailAndDeposit("john@rexus.com", 1000);
+
+const accountForWithdrawal = Account.findByEmail("john@rexus.com");
+const remainingBalance = accountForWithdrawal.withdraw(250);
+console.log(`Withdrawal successful. Remaining balance: $${remainingBalance}`);
 
 const user = Account.findByEmail("david@rexus.com");
 console.log(user.getAccountBalance());
