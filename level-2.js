@@ -5,7 +5,13 @@ import {
   validateDate,
   validateAmount,
 } from "./validation/validator.js";
-import { BadRequestError, NotFoundError } from "./errors/custom.js";
+import {
+  AccountAlreadyExistsError,
+  BadRequestError,
+  InsufficientFundsError,
+  InvalidTransactionError,
+  NotFoundError,
+} from "./errors/custom.js";
 
 class Account {
   #balance = 0; // per instance
@@ -17,9 +23,14 @@ class Account {
     validateEmail(email);
     validateDate(date);
 
+    const normalizedEmail = email.toLowerCase();
+    if (Account.#users.some((user) => user.email === normalizedEmail)) {
+      throw new AccountAlreadyExistsError("Account with this email");
+    }
+
     this.name = name;
     this.age = age;
-    this.email = email;
+    this.email = normalizedEmail;
     this.date = date;
     Account.#users.push(this);
   }
@@ -27,18 +38,19 @@ class Account {
   // instance method, called on a specific account
   deposit(amount) {
     validateAmount(amount);
+    if (!Number.isFinite(amount) || amount <= 0) {
+      throw new InvalidTransactionError();
+    }
     this.#balance += amount;
   }
 
   withdraw(amount) {
     validateAmount(amount);
     if (!Number.isFinite(amount) || amount <= 0) {
-      throw new BadRequestError(
-        "Withdrawal amount must be a positive, finite number",
-      );
+      throw new InvalidTransactionError();
     }
     if (amount > this.#balance) {
-      throw new BadRequestError("Insufficient funds");
+      throw new InsufficientFundsError(this.#balance, amount);
     }
     this.#balance -= amount;
     return this.#balance;
@@ -62,12 +74,22 @@ class Account {
   }
 
   static findByEmail(email) {
+    if (typeof email !== "string") {
+      throw new BadRequestError(
+        `Expected string for 'email' field but got ${typeof email}`,
+      );
+    }
     const user = Account.#users.find((u) => u.email === email.toLowerCase());
     if (!user) throw new NotFoundError("User");
     return user;
   }
 
   static findByEmailAndDeposit(email, amount) {
+    if (typeof email !== "string") {
+      throw new BadRequestError(
+        `Expected string for 'email' field but got ${typeof email}`,
+      );
+    }
     const user = Account.#users.find((u) => u.email === email.toLowerCase());
     if (!user) throw new NotFoundError("User");
     user.deposit(amount);
