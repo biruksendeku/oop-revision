@@ -55,6 +55,26 @@ class Account {
     return this.#balance;
   }
 
+  transferTo(recipient, amount) {
+    validateTransactionAmount(amount);
+    if (!(recipient instanceof Account)) {
+      throw new BadRequestError("Recipient must be a valid bank account");
+    }
+    if (recipient === this) {
+      throw new BadRequestError("Cannot transfer funds to the same account");
+    }
+    if (amount > this.#balance) {
+      throw new InsufficientFundsError(this.#balance, amount);
+    }
+
+    this.#balance -= amount;
+    recipient.#balance += amount;
+    return {
+      senderBalance: this.#balance,
+      recipientBalance: recipient.#balance,
+    };
+  }
+
   //   createAccountSync() {}
   //   createAccountAsync() {}
 
@@ -99,6 +119,12 @@ class Account {
     return user.withdraw(amount);
   }
 
+  static transferFunds(fromEmail, toEmail, amount) {
+    const sender = Account.findByEmail(fromEmail);
+    const recipient = Account.findByEmail(toEmail);
+    return sender.transferTo(recipient, amount);
+  }
+
   getAccountBalance() {
     return this.#balance;
   }
@@ -119,6 +145,13 @@ console.log(
   "John's balance after withdrawal:",
   Account.findByEmail("john@rexus.com").getAccountBalance(),
 );
+
+const transferResult = Account.transferFunds(
+  "john@rexus.com",
+  "david@rexus.com",
+  200,
+);
+console.log("Transfer successful:", transferResult);
 
 const user = Account.findByEmail("david@rexus.com");
 console.log(user.getAccountBalance());
