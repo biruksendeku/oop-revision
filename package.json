@@ -11,6 +11,7 @@
     "start": "node index.js",
     "one": "node level-1.js",
     "two": "node level-2.js",
-    "three": "node level-3.js"
+    "three": "node level-3.js",
+    "four": "node level-4.js"
   }
 }
