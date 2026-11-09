@@ -3,7 +3,6 @@ import {
   validateAge,
   validateEmail,
   validateDate,
-  validateAmount,
 } from "./validation/validator.js";
 import {
   AccountAlreadyExistsError,
@@ -12,6 +11,12 @@ import {
   InvalidTransactionError,
   NotFoundError,
 } from "./errors/custom.js";
+
+const validateTransactionAmount = (amount) => {
+  if (typeof amount !== "number" || !Number.isFinite(amount) || amount <= 0) {
+    throw new InvalidTransactionError();
+  }
+};
 
 class Account {
   #balance = 0; // per instance
@@ -37,18 +42,12 @@ class Account {
 
   // instance method, called on a specific account
   deposit(amount) {
-    validateAmount(amount);
-    if (!Number.isFinite(amount) || amount <= 0) {
-      throw new InvalidTransactionError();
-    }
+    validateTransactionAmount(amount);
     this.#balance += amount;
   }
 
   withdraw(amount) {
-    validateAmount(amount);
-    if (!Number.isFinite(amount) || amount <= 0) {
-      throw new InvalidTransactionError();
-    }
+    validateTransactionAmount(amount);
     if (amount > this.#balance) {
       throw new InsufficientFundsError(this.#balance, amount);
     }
