@@ -12,6 +12,10 @@
     "one": "node level-1.js",
     "two": "node level-2.js",
     "three": "node level-3.js",
-    "four": "node level-4.js"
+    "four": "node level-4.js",
+    "four:visual": "node level-4-server.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
   }
 }
