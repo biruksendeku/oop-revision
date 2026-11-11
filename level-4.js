@@ -6,6 +6,7 @@ import {
   NotFoundError,
 } from "./errors/custom.js";
 import { pathToFileURL } from "node:url";
+import format from "./utils/string/format.js";
 
 const toCents = (amount) => {
   if (typeof amount !== "number" || !Number.isFinite(amount) || amount <= 0) {
@@ -29,7 +30,7 @@ const validateEmail = (email) => {
   ) {
     throw new BadRequestError("A valid email address is required");
   }
-  return email.trim().toLowerCase();
+  return format(email);
 };
 
 export class BankAccount {
@@ -44,11 +45,15 @@ export class BankAccount {
   #closedAt = null;
 
   constructor(name, email, age, openedAt = new Date()) {
-    if (typeof name !== "string" || name.trim().length === 0) {
+    name = format(name);
+    email = format(email);
+    if (typeof name !== "string" || name.length === 0) {
       throw new BadRequestError("Account name must be a non-empty string");
     }
     if (!Number.isSafeInteger(age) || age <= 0) {
-      throw new BadRequestError("Account holder age must be a positive integer");
+      throw new BadRequestError(
+        "Account holder age must be a positive integer",
+      );
     }
     if (!(openedAt instanceof Date) || Number.isNaN(openedAt.getTime())) {
       throw new BadRequestError("Account opening date must be a valid Date");
@@ -59,7 +64,7 @@ export class BankAccount {
       throw new AccountAlreadyExistsError("Account with this email");
     }
 
-    this.#name = name.trim();
+    this.#name = format(name);
     this.#email = normalizedEmail;
     this.#age = age;
     this.#openedAt = new Date(openedAt.getTime());
@@ -183,7 +188,10 @@ export class BankAccount {
   }
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+if (
+  process.argv[1] &&
+  import.meta.url === pathToFileURL(process.argv[1]).href
+) {
   const alice = new BankAccount("Alice", "alice@example.com", 28);
   new BankAccount("Bob", "bob@example.com", 35);
 
